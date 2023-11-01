@@ -216,29 +216,29 @@ class LMTrainer():
             report_to='none'
         )
         self.loss_func = loss_func
-        pretrained_model = AutoModel.from_pretrained(self.name, cache_dir = "/localscratch/czk")
+        pretrained_model = AutoModel.from_pretrained(self.name, cache_dir = "/home/cjz/Graph-LLM/localscratch/czk")
         self.model = BertClassifier(pretrained_model,
                                     n_labels=self.n_labels,
                                     loss_func=self.loss_func,
                                     feat_shrink=self.config.feat_shrink)
         # self.model = AutoModelForSequenceClassification.from_pretrained(self.name, num_labels=7, cache_dir="/localscratch/czk")
         
-        self.tokenizer = AutoTokenizer.from_pretrained(self.name, use_fast = False, cache_dir = "/localscratch/czk")
+        self.tokenizer = AutoTokenizer.from_pretrained(self.name, use_fast = False, cache_dir = "/home/cjz/Graph-LLM/localscratch/czk")
         if 'inp' in self.config.dataset_name:
             prev = self.config.dataset_name.split('_')[0]
-            data_obj = th.load(f"./preprocessed_data/new/{prev}_{self.config.split}_know_inp_sb.pt", map_location='cpu')
+            data_obj = th.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{prev}_{self.config.split}_know_inp_sb.pt", map_location='cpu')
             texts_inp, _ = knowledge_augmentation(data_obj.raw_texts, data_obj.entity, strategy='inplace')
             X = self.tokenizer(texts_inp, padding=True, truncation=True, max_length=512, return_tensors='pt')
         elif 'sep' in self.config.dataset_name:
             prev = self.config.dataset_name.split('_')[0]
-            data_obj = th.load(f"./preprocessed_data/new/{prev}_{self.config.split}_know_sep_sb.pt", map_location='cpu')
+            data_obj = th.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{prev}_{self.config.split}_know_sep_sb.pt", map_location='cpu')
             texts_inp, knowledge = knowledge_augmentation(data_obj.raw_texts, data_obj.entity, strategy='separate')
             X = self.tokenizer(knowledge, padding=True, truncation=True, max_length=512, return_tensors='pt')
         else:    
             if not self.config.use_explanation:
                 X = self.tokenizer(self.total_data.raw_texts, padding=True, truncation=True, max_length=512, return_tensors='pt')
             else:
-                explanation = th.load(f"./preprocessed_data/new/{self.config.dataset_name}_explanation.pt")
+                explanation = th.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{self.config.dataset_name}_explanation.pt")
                 X = self.tokenizer(explanation, padding=True, truncation=True, max_length=512, return_tensors='pt')
         self.num_of_nodes = len(self.total_data.raw_texts)
         self.text_dataset = TextDataset(X, self.total_data.raw_texts, self.total_data, self.total_data.y)
@@ -288,7 +288,7 @@ class LMTrainer():
         if finetune:
             emb_save_model = BertClaInfModel(self.best_model, self.emb, self.pred, self.loss_func, self.config.feat_shrink)
         else:
-            pretrained_model = AutoModel.from_pretrained(self.name, cache_dir = "/localscratch/czk")
+            pretrained_model = AutoModel.from_pretrained(self.name, cache_dir = "/home/cjz/Graph-LLM/localscratch/czk")
             no_ft_model = BertClassifier(pretrained_model,
                                     n_labels=self.n_labels,
                                     loss_func=self.loss_func,

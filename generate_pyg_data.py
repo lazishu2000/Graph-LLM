@@ -14,9 +14,9 @@ def main():
     dataset = ['cora', 'pubmed', 'citeseer', 'arxiv']
     split = ['random', 'fixed']
     ogb_dataset = ['arxiv', 'products']
-    embedding = ["know_inp_ft", "know_sep_ft", "tfidf", "word2vec", "sbert", "know_inp_sb", "know_sep_sb", "ada", "llama"]
+    embedding = ["sbert", "know_sep_ft", "tfidf", "word2vec", "know_inp_ft", "know_inp_sb", "know_sep_sb", "ada", "llama"]
     # knowledge = ["cora", "pubmed"]
-    data_path = "./preprocessed_data"
+    data_path = "/home/cjz/Graph-LLM/preprocessed_data"
     ## if match default, just skip
     default = {
         'cora': 'tfidf',
@@ -33,25 +33,25 @@ def main():
         for setting in split:
             if name in ogb_dataset and setting == 'random': continue
             if name == "cora" and setting == 'random':
-                data_obj = torch.load("./preprocessed_data/new/cora_random_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/cora_random_sbert.pt", map_location="cpu")
                 data_obj.raw_texts = data_obj.raw_text
                 data_obj.category_names = [data_obj.label_names[i] for i in data_obj.y.tolist()]
             elif name == "cora" and setting == 'fixed':
-                data_obj = torch.load("./preprocessed_data/new/cora_fixed_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/cora_fixed_sbert.pt", map_location="cpu")
                 data_obj.raw_texts = data_obj.raw_text
                 data_obj.category_names = [data_obj.label_names[i] for i in data_obj.y.tolist()]
             elif name == "citeseer" and setting == 'random':
-                data_obj = torch.load("./preprocessed_data/new/citeseer_random_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/citeseer_random_sbert.pt", map_location="cpu")
             elif name == "citeseer" and setting == 'fixed':
-                data_obj = torch.load("./preprocessed_data/new/citeseer_fixed_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/citeseer_fixed_sbert.pt", map_location="cpu")
             elif name == "pubmed" and setting == 'random':
-                data_obj = torch.load("./preprocessed_data/new/pubmed_random_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/pubmed_random_sbert.pt", map_location="cpu")
             elif name == "pubmed" and setting == 'fixed':
-                data_obj = torch.load("./preprocessed_data/new/pubmed_fixed_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/pubmed_fixed_sbert.pt", map_location="cpu")
             elif name == "arxiv":
-                data_obj = torch.load("./preprocessed_data/new/arxiv_fixed_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/arxiv_fixed_sbert.pt", map_location="cpu")
             elif name == "products":
-                data_obj = torch.load("./preprocessed_data/new/products_fixed_sbert.pt", map_location="cpu")
+                data_obj = torch.load("/home/cjz/Graph-LLM/preprocessed_data/new/products_fixed_sbert.pt", map_location="cpu")
                 # old_products = get_ogbn_dataset("ogbn-products", normalize_features=False)
                 # splits = old_products.get_idx_split()
                 # data_obj.train_masks = [index_to_mask(splits['train'], size = data_obj.x.shape[0])]
@@ -61,7 +61,7 @@ def main():
             if name == 'cora' or name == 'pubmed':
                 #d_name = name.split("_")[0]
                 d_name = name
-                entity_pt = torch.load(f"{d_name}_entity.pt", map_location="cpu")
+                entity_pt = torch.load(f"/home/cjz/Graph-LLM/{d_name}_entity.pt", map_location="cpu")
                 data_obj = torch.load(osp.join(data_path, "new", f"{d_name}_fixed_sbert.pt"), map_location="cpu")
                 data_obj.entity = entity_pt
             num_nodes = len(data_obj.raw_texts)
@@ -131,42 +131,42 @@ def main():
                         if name == 'pubmed' or name == 'cora':
                             data_obj.xs = []
                             for i in range(5):
-                                emb = np.memmap(f"./lmoutput/{name}_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
+                                emb = np.memmap(f"/home/cjz/Graph-LLM/lmoutput/{name}_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
                                     shape=(num_nodes, hidden_dim))
                                 x = torch.tensor(emb, dtype=torch.float32)
                                 data_obj.xs.append(x)
                             data_obj.x = data_obj.xs[0]
                         else:
                         # elif 'know' not in name:
-                            emb = np.memmap(f"./lmoutput/{name}_finetune_{setting}_0.emb", dtype=np.float16, mode='r',
+                            emb = np.memmap(f"/home/cjz/Graph-LLM/lmoutput/{name}_finetune_{setting}_0.emb", dtype=np.float16, mode='r',
                                 shape=(num_nodes, hidden_dim))
                             data_obj.x = torch.tensor(emb, dtype=torch.float32)
                     elif typ == "noft":
                         if name == 'pubmed' or name == 'cora':
                             data_obj.xs = []
                             for i in range(5):
-                                emb = np.memmap(f"./lmoutput/{name}_no_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
+                                emb = np.memmap(f"/home/cjz/Graph-LLM/lmoutput/{name}_no_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
                                     shape=(num_nodes, hidden_dim))
                                 x = torch.tensor(emb, dtype=torch.float32)
                                 data_obj.xs.append(x)
                             data_obj.x = data_obj.xs[0]
                         else:
-                            emb = np.memmap(f"./lmoutput/{name}_no_finetune_{setting}.emb", dtype=np.float16, mode='r',
+                            emb = np.memmap(f"/home/cjz/Graph-LLM/lmoutput/{name}_no_finetune_{setting}.emb", dtype=np.float16, mode='r',
                                 shape=(num_nodes, hidden_dim))
                             data_obj.x = torch.tensor(emb, dtype=torch.float32)
                     elif typ == 'e5':
-                        emb = torch.load(f"./openai_out/{name}_e5_embedding.pt")
+                        emb = torch.load(f"/home/cjz/Graph-LLM/openai_out/{name}_e5_embedding.pt")
                         data_obj.x = emb
                     elif typ == 'google':
                         if name in ['arxiv', 'products']:
                             continue
-                        emb = torch.load(f"./openai_out/{name}_google_embedding.pt")
+                        emb = torch.load(f"/home/cjz/Graph-LLM/openai_out/{name}_google_embedding.pt")
                         emb = emb.reshape(num_nodes, -1)
                         data_obj.x = emb
                     elif typ == "know_exp_ft":
                         xs = []
                         for i in range(5):
-                            emb = np.memmap(f"./lmoutput/{name}_finetune_{setting}_{i}_exp.emb", dtype=np.float16, mode='r',
+                            emb = np.memmap(f"/home/cjz/Graph-LLM/lmoutput/{name}_finetune_{setting}_{i}_exp.emb", dtype=np.float16, mode='r',
                                 shape=(num_nodes, hidden_dim))
                             x = torch.tensor(emb, dtype=torch.float32)
                             xs.append(x)
@@ -175,7 +175,7 @@ def main():
                     elif typ == "know_inp_ft":
                         xs = []
                         for i in range(5):
-                            emb = np.memmap(f"./lmoutput/{name}_inp_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
+                            emb = np.memmap(f"/home/cjz/Graph-LLM/lmoutput/{name}_inp_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
                                 shape=(num_nodes, hidden_dim))
                             x = torch.tensor(emb, dtype=torch.float32)
                             xs.append(x)
@@ -184,17 +184,17 @@ def main():
                     elif typ == "know_sep_ft":
                         xs = []
                         for i in range(5):
-                            emb = np.memmap(f"./lmoutput/{name}_sep_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
+                            emb = np.memmap(f"/home/cjz/Graph-LLM/lmoutput/{name}_sep_finetune_{setting}_{i}.emb", dtype=np.float16, mode='r',
                                 shape=(num_nodes, hidden_dim))
                             x = torch.tensor(emb, dtype=torch.float32)
                             xs.append(x)
                         data_obj.xs = xs 
                         data_obj.x = xs[0]
                     elif typ == "know_exp_sb":
-                        exp = torch.load(f"./preprocessed_data/new/{name}_explanation.pt")
+                        exp = torch.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{name}_explanation.pt")
                         data_obj.x = get_sbert_embedding(exp)
                     elif typ == "pl":
-                        pl = torch.load(f"./preprocessed_data/new/{name}_pred.pt")
+                        pl = torch.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{name}_pred.pt")
                         data_obj.x = pl
                 if name in ['cora', 'citeseer', 'pubmed']:
                     new_train_masks = []

@@ -192,7 +192,7 @@ class LP(torch.nn.Module):
 
 
 def sbert(device):
-    model = SentenceTransformer('all-MiniLM-L6-v2', cache_folder='/localscratch/czk/huggingface', device=device).to(device)
+    model = SentenceTransformer('all-MiniLM-L6-v2', cache_folder='/home/cjz/Graph-LLM/localscratch/czk/huggingface', device=device).to(device)
     return model 
 
 

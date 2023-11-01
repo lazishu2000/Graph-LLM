@@ -36,7 +36,7 @@ from torch_geometric.utils import homophily
 from utils import delete_after_brace
 import json
 from langchain.embeddings import LlamaCppEmbeddings
-from ogbn_products import get_raw_dataset
+# from ogbn_products import get_raw_dataset
 from gensim.test.utils import datapath
 from gensim.models import KeyedVectors
 from tqdm import tqdm
@@ -50,7 +50,7 @@ import yaml
 OPENAI_OUT = './openai_out'
 
 def load_secret():
-    with open('secret.yaml') as f:
+    with open('/home/cjz/Graph-LLM/secret.yaml') as f:
         secret = yaml.safe_load(f)
     return secret
 
@@ -117,14 +117,14 @@ def get_dataset(seed_num, dataset, split, data_format, low_label_test):
         old_mask = True
     seeds = [i for i in range(seed_num)]
     if 'pl' in split:
-        data = torch.load(f"./preprocessed_data/new/{dataset}_random_{data_format}.pt", map_location='cpu')
+        data = torch.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{dataset}_random_{data_format}.pt", map_location='cpu')
     else:
         if data_format == 'raw':
-            data = Planetoid(f"./data/planetoid", dataset.capitalize())[0]    
+            data = Planetoid(f"/home/cjz/Graph-LLM/data/planetoid", dataset.capitalize())[0]    
         else:
-            data = torch.load(f"./preprocessed_data/new/{dataset}_{split}_{data_format}.pt", map_location='cpu')
+            data = torch.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{dataset}_{split}_{data_format}.pt", map_location='cpu')
     if 'pl' in split:
-        pl_data = torch.load(f"./preprocessed_data/new/{dataset}_random_pl.pt")
+        pl_data = torch.load(f"/home/cjz/Graph-LLM/preprocessed_data/new/{dataset}_random_pl.pt")
         # import ipdb; ipdb.set_trace()
         pseudo_labels = pl_data.x[:, 0][:]
         pseudo_labels -= 1

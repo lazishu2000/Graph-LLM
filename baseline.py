@@ -191,7 +191,7 @@ def main(args = None, custom_args = None, save_best = False):
         std_test_acc = np.std(test_result_acc) * 100
         print(f"Test Accuracy: {mean_test_acc:.2f} ± {std_test_acc:.2f}")
         print("Test acc: {}".format(test_result_acc))
-        pkl_and_write(out_res, f'./output/{args.model_name}_{args.dataset}_{args.data_format}.pkl')
+        pkl_and_write(out_res, f'/home/cjz/Graph-LLM/output/{args.model_name}_{args.dataset}_{args.data_format}.pkl')
     elif args.ensemble_string != "":
         feats = args.ensemble_string.split(";")
         res = []
@@ -328,7 +328,7 @@ def ensemble_helper(logits, labels, test_masks):
     
 if __name__ == '__main__':
     current_time = int(time.time())
-    logging.basicConfig(filename='./logs/{}.log'.format(current_time),
+    logging.basicConfig(filename='/home/cjz/Graph-LLM/logs/{}.log'.format(current_time),
                     filemode='a',
                     format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                     datefmt='%H:%M:%S',
